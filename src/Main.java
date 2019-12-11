@@ -8,5 +8,6 @@ public class Main {
         DrawPanel panel = new DrawPanel();
         frame.add(panel);
         frame.setVisible(true);
+        frame.addKeyListener(panel);
     }
 }

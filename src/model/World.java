@@ -65,9 +65,11 @@ public class World implements IWorld {
         //camera
 
         if(p.getPosition().getLengthBetweenPoints(c.getPosition())>2){
-            c.setAcceleration(new Vector2(c.getPosition(),p.getPosition()));
-        } else if(p.getPosition().getLengthBetweenPoints(c.getPosition())<1.5) {
-            c.setM(p.getM()*10000);
+            c.setVelocity(new Vector2(c.getPosition(),p.getPosition()).mul(0.1));
+        } else if(p.getPosition().getLengthBetweenPoints(c.getPosition())<1) {
+            //c.setAcceleration(new Vector2(c.getPosition(),p.getPosition()).mul(-0.1));
+            //c.setM(1/new Vector2(c.getPosition(),p.getPosition()).length()*1000);
+            c.setVelocity(new Vector2(0,0));
         }
         np = c.getPosition()
                 .add(c.getVelocity().mul(dt))
@@ -77,8 +79,7 @@ public class World implements IWorld {
         Ftr = c.getVelocity().normolized().mul(-f.getMu()*c.getM()*f.getG());
         Ftr = Ftr.add(c.getAcceleration());
 
-        c.setAcceleration(Ftr.mul(1/c.getM()));
-        System.out.println(c.getAcceleration().getX()+" "+c.getAcceleration().getY());
+        //c.setAcceleration(Ftr.mul(1/c.getM()));
         c.setVelocity(nv);
         c.setPosition(np);
 

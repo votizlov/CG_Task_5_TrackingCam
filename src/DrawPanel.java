@@ -4,6 +4,7 @@
  */
 
 import math.Rectangle;
+import math.Vector2;
 import model.Field;
 import model.Puck;
 import model.World;
@@ -18,7 +19,7 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 
 public class DrawPanel extends JPanel implements ActionListener,
-        MouseListener, MouseMotionListener, MouseWheelListener {
+        MouseListener, MouseMotionListener, MouseWheelListener, KeyListener {
     private ScreenConverter sc;
     private World w;
     private AbstractWorldTimer uwt;
@@ -34,6 +35,7 @@ public class DrawPanel extends JPanel implements ActionListener,
         this.addMouseListener(this);
         this.addMouseMotionListener(this);
         this.addMouseWheelListener(this);
+        this.addKeyListener(this);
 
         (uwt = new UpdateWorldTimer(w, 10)).start();
         drawTimer = new Timer(40, this);
@@ -111,4 +113,36 @@ public class DrawPanel extends JPanel implements ActionListener,
         w.getF().setMu(oldMu);
     }
 
+    boolean isUp,isDown,isRight,isLeft;
+
+    @Override
+    public void keyTyped(KeyEvent keyEvent) {
+
+    }
+
+    @Override
+    public void keyPressed(KeyEvent keyEvent) {
+        Vector2 dir = new Vector2(0,0);
+        switch (keyEvent.getKeyCode()){
+            case KeyEvent.VK_UP:isUp = !isUp;
+                dir = w.getP().getPosition().add(new Vector2(0,5));
+                break;
+            case KeyEvent.VK_DOWN:isDown = !isDown;
+                dir = w.getP().getPosition().add(new Vector2(0,-5));
+                break;
+            case KeyEvent.VK_LEFT:isLeft = !isLeft;
+                dir = w.getP().getPosition().add(new Vector2(-5,0));
+                break;
+            case KeyEvent.VK_RIGHT:isRight = !isRight;
+                dir = w.getP().getPosition().add(new Vector2(5,0));
+                break;
+        }
+        w.getExternalForce().setLocation(dir);
+        w.getExternalForce().setValue(10);
+    }
+
+    @Override
+    public void keyReleased(KeyEvent keyEvent) {
+        w.getExternalForce().setValue(0);
+    }
 }
