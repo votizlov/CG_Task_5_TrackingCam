@@ -8,7 +8,13 @@ import math.Vector2;
 import utils2d.ScreenConverter;
 import utils2d.ScreenPoint;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.LinkedList;
 
 public class World implements IWorld {
     public CamAnchor getC() {
@@ -19,12 +25,30 @@ public class World implements IWorld {
     private Puck p;
     private Field f;
     private ForceSource externalForce;
+    private LinkedList<PhysicalModel> models;
 
     public World(Puck p, Field f) {
         this.p = p;
         this.f = f;
         this.externalForce = new ForceSource(f.getRectangle().getCenter());
         this.c = new CamAnchor(p.getM(),f.getRectangle().getCenter());
+        this.models = new LinkedList<>();
+        models.addAll(Arrays.asList(
+                new Puck(p.getM(),p.getR(),new Vector2(10,0)),
+                new Puck(p.getM(),p.getR(),new Vector2(15,-10)),
+                new PhysicalModel(p.getM(), p.getR(), new Vector2(20, -15)) {
+                    @Override
+                    public void draw(Graphics2D g, int i, int j) {
+                        g.drawString("image",i,j);
+                    }
+
+                    @Override
+                    public boolean isCollide(Vector2 pos) {
+                        return false;
+                    }
+                },
+                new PhysicalImage(p.getM(),p.getR(),new Vector2(35,-20))
+        ));
     }
     
     /**
@@ -65,10 +89,8 @@ public class World implements IWorld {
         //camera
 
         if(p.getPosition().getLengthBetweenPoints(c.getPosition())>2){
-            c.setVelocity(new Vector2(c.getPosition(),p.getPosition()).mul(0.1));
+            c.setVelocity(new Vector2(c.getPosition(),p.getPosition()).mul(1));
         } else if(p.getPosition().getLengthBetweenPoints(c.getPosition())<1) {
-            //c.setAcceleration(new Vector2(c.getPosition(),p.getPosition()).mul(-0.1));
-            //c.setM(1/new Vector2(c.getPosition(),p.getPosition()).length()*1000);
             c.setVelocity(new Vector2(0,0));
         }
         np = c.getPosition()
@@ -105,6 +127,10 @@ public class World implements IWorld {
         int rv = sc.r2sDistanceV(p.getR());
         g.setColor(Color.BLACK);
         g.fillOval(pc.getI() - rh, pc.getJ() - rv, rh + rh, rv + rv);
+        for (PhysicalModel m:models
+             ) {
+            m.draw(g,sc.r2s(m.getPosition()).getI(),sc.r2s(m.getPosition()).getJ());
+        }
         
         g.drawString(String.format("Mu=%.2f", f.getMu()), 10, 30);
         g.drawString(String.format("F=%.0f", externalForce.getValue()), 10, 50);

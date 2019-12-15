@@ -5,13 +5,12 @@
 package model;
 
 import math.Vector2;
+import utils2d.ScreenPoint;
+
+import java.awt.*;
 
 
-public class Puck {
-    private double m, r;
-    private Vector2 position;
-    private Vector2 velocity;
-    private Vector2 acceleration;
+public class Puck extends PhysicalModel {
 
     /**
      * Создаём шайбу с нулевой скоростью и ускорением
@@ -20,52 +19,19 @@ public class Puck {
      * @param position Положение шайбы относительно начала координат [м]
      */
     public Puck(double m, double r, Vector2 position) {
-        this.m = m;
-        this.r = r;
-        this.position = position;
-        this.velocity = new Vector2(0, 0);
-        this.acceleration = new Vector2(0, 0);
+        super(m,r,position);
     }
 
-    public Vector2 getAcceleration() {
-        return acceleration;
+    @Override
+    public boolean isCollide(Vector2 pos) {
+        return new Vector2(pos,getPosition()).length()<getR();
     }
 
-    public void setAcceleration(Vector2 acceleration) {
-        this.acceleration = acceleration;
-    }
 
-    public double getM() {
-        return m;
-    }
+    @Override
+    public void draw(Graphics2D g, int i, int j) {
+        g.setColor(Color.BLACK);
+        g.fillOval(i - 10, j - 10, 10, 10);
 
-    public void setM(double m) {
-        this.m = m;
     }
-
-    public Vector2 getPosition() {
-        return position;
-    }
-
-    public void setPosition(Vector2 position) {
-        this.position = position;
-    }
-
-    public double getR() {
-        return r;
-    }
-
-    public void setR(double r) {
-        this.r = r;
-    }
-
-    public Vector2 getVelocity() {
-        return velocity;
-    }
-
-    public void setVelocity(Vector2 velocity) {
-        this.velocity = velocity;
-    }
-    
-    
 }

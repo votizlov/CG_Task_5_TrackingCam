@@ -24,14 +24,17 @@ public class DrawPanel extends JPanel implements ActionListener,
     private World w;
     private AbstractWorldTimer uwt;
     private Timer drawTimer;
+    private Field f;
+    Rectangle view;
 
     public DrawPanel() {
         super();
-        Field f = new Field(
-                new Rectangle(0, 10, 10, 10),
+        f = new Field(
+                new Rectangle(0, 10,50, 50),
                 0.1, 9.8);
         w = new World(new Puck(1, 0.3, f.getRectangle().getCenter()), f);
-        sc = new ScreenConverter(f.getRectangle(), 450, 450);
+        view = new Rectangle(20,30,25,25);
+        sc = new ScreenConverter(view, 450, 450);
         this.addMouseListener(this);
         this.addMouseMotionListener(this);
         this.addMouseWheelListener(this);
@@ -47,8 +50,15 @@ public class DrawPanel extends JPanel implements ActionListener,
         BufferedImage bi = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
         sc.setHs(getHeight());
         sc.setWs(getWidth());
-        sc.setXr(w.getC().getPosition().getX()-5 );
-        sc.setYr(w.getC().getPosition().getY()+5 );
+        sc.setXr(w.getC().getPosition().getX()-f.getRectangle().getWidth()/2+view.getWidth()/2);
+        sc.setYr(w.getC().getPosition().getY()+f.getRectangle().getHeight()/2-view.getHeight()/2);
+        if (new Vector2(w.getP().getPosition(),w.getC().getPosition()).length()>3) {
+            sc.setHr(sc.getHr()+0.2);
+            sc.setWr(sc.getWr()+0.2);
+        } else {
+            sc.setHr(view.getHeight());
+            sc.setWr(view.getWidth());
+        }
         w.draw((Graphics2D) bi.getGraphics(), sc);
         g.drawImage(bi, 0, 0, null);
     }
