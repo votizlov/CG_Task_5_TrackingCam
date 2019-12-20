@@ -50,17 +50,21 @@ public class DrawPanel extends JPanel implements ActionListener,
     @Override
     public void paint(Graphics g) {
         BufferedImage bi = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
+        double k = sqrt(new Vector2(w.getP().getPosition(), w.getC().getPosition()).length() / 4);
         sc.setHs(getHeight());
         sc.setWs(getWidth());
-        sc.setXr(w.getC().getPosition().getX() - f.getRectangle().getWidth() / 2 + view.getWidth() / 2);
-        sc.setYr(w.getC().getPosition().getY() + f.getRectangle().getHeight() / 2 - view.getHeight() / 2);
         if (new Vector2(w.getP().getPosition(), w.getC().getPosition()).length() > 4) {
-            double k = sqrt(new Vector2(w.getP().getPosition(), w.getC().getPosition()).length() / 4);
             sc.setHr(view.getHeight() * k);
             sc.setWr(view.getWidth() * k);
+            sc.setXr(w.getC().getPosition().getX() - f.getRectangle().getWidth() / 2*k + view.getWidth() / 2*k);
+            sc.setYr(w.getC().getPosition().getY() + f.getRectangle().getHeight() / 2*k - view.getHeight() / 2*k);
         } else {
             sc.setHr(view.getHeight());
             sc.setWr(view.getWidth());
+            sc.setXr(w.getC().getPosition().getX() - f.getRectangle().getWidth() / 2 + view.getWidth() / 2);
+            sc.setYr(w.getC().getPosition().getY() + f.getRectangle().getHeight() / 2 - view.getHeight() / 2);
+            //sc.setXr(view.getLeft());
+            //sc.setYr(view.getTop());
         }
         w.draw((Graphics2D) bi.getGraphics(), sc);
         g.drawImage(bi, 0, 0, null);
@@ -136,6 +140,7 @@ public class DrawPanel extends JPanel implements ActionListener,
     @Override
     public void keyPressed(KeyEvent keyEvent) {
         Vector2 dir = new Vector2(0, 0);
+        double val = 10;
         switch (keyEvent.getKeyCode()) {
             case KeyEvent.VK_UP:
                 isUp = !isUp;
@@ -156,9 +161,11 @@ public class DrawPanel extends JPanel implements ActionListener,
             case KeyEvent.VK_SPACE:
                 w.switchTgtModel();
                 break;
+            default:val = 0;
+            break;
         }
         w.getExternalForce().setLocation(dir);
-        w.getExternalForce().setValue(10);
+        w.getExternalForce().setValue(val);
     }
 
     @Override
