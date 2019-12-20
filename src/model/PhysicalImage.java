@@ -27,6 +27,6 @@ public class PhysicalImage extends PhysicalModel {
 
     @Override
     public void draw(Graphics2D g, int i, int j) {
-        g.drawImage(image,i,j,null);
+        g.drawImage(image,i-image.getWidth()/2,j-image.getHeight()/2,null);
     }
 }
